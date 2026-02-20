@@ -1,0 +1,6 @@
+﻿fastapi>=0.115.0
+uvicorn>=0.30.0
+pydantic>=2.8.0
+gitpython>=3.1.43
+litellm>=1.52.0
+chromadb>=0.5.5
