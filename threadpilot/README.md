@@ -1,54 +1,55 @@
 ﻿# ThreadPilot MVP
 
-ThreadPilot is a local-first MVP that tracks project state, ingests requirement context, and generates a PM-oriented review packet from Git changes.
+ThreadPilot is a local-first MVP that tracks project state, ingests requirement context, and generates PM-oriented review packets from Git changes.
 
-## 1) Environment setup
+## Quick Start (Beginner)
+
+### Option A: One-click run (recommended)
+Double-click:
+- `start_threadpilot_ui.bat`
+
+What it does automatically:
+- Detects `dist/threadpilot.exe` and runs it if available
+- If EXE is missing: creates `.venv`, installs defaults from `requirements.txt`, launches UI
+
+### Option B: Full default setup (install everything)
+Double-click:
+- `setup_default.bat`
+
+What it does automatically:
+- Creates `.venv`
+- Upgrades `pip`
+- Installs all dependencies
+- Installs `pyinstaller`
+- Builds `dist/threadpilot.exe`
+- Launches UI
+
+## Manual CLI usage
 
 ```bash
 python -m venv .venv
 .venv\\Scripts\\activate
 pip install -r requirements.txt
+python -m threadpilot.main ui
 ```
 
-## 2) Bootstrap project requirements
-
-If your document is `requirements.md`:
+## CLI Commands
 
 ```bash
-python -m threadpilot.main bootstrap --requirements-file requirements.md
-```
-
-If your document has a different filename (for example Korean names), pass that file path explicitly.
-
-## 3) Run CLI review
-
-Mock mode (no API key needed):
-
-```bash
+python -m threadpilot.main bootstrap --requirements-file 요구사항.md
 python -m threadpilot.main review --pr 123
-```
-
-Live LLM mode:
-
-```bash
-set OPENAI_API_KEY=your_key_here
 python -m threadpilot.main review --pr 123 --live
 ```
 
-## 4) Run API server
+## API Endpoints
 
-```bash
-uvicorn threadpilot.main:app --reload
-```
-
-Endpoints:
 - `GET /api/health`
 - `POST /api/bootstrap`
 - `POST /api/review/{pr_id}?live=false`
 
 ## Data persistence
 
-Local state files are written under `threadpilot/data/`:
+Local files are written under `threadpilot/data/`:
 - `project_state.json`
 - `requirements.json`
 - `todo_list.md`

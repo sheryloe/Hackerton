@@ -1,0 +1,285 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ThreadPilot Starter UI</title>
+  <style>
+    :root {
+      --bg: #f7f4ef;
+      --card: #fffaf2;
+      --ink: #1e1f24;
+      --muted: #5a6472;
+      --accent: #0b6e4f;
+      --accent-2: #d17b0f;
+      --line: #e2d8c8;
+      --danger: #b42318;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Noto Sans KR", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% -10%, #ffd9a8 0%, transparent 35%),
+        radial-gradient(circle at 110% 10%, #bdebd9 0%, transparent 35%),
+        var(--bg);
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero {
+      background: linear-gradient(115deg, #1f2d3d, #284b63 58%, #3c6e71);
+      color: #f4f9ff;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 10px 35px rgba(31, 45, 61, 0.25);
+      animation: rise 0.45s ease-out;
+    }
+
+    .hero h1 { margin: 0 0 10px; font-size: 1.6rem; }
+    .hero p { margin: 0; opacity: 0.92; }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      animation: rise 0.5s ease-out;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 1.05rem;
+    }
+
+    .hint {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 6px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 10px 0;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.12s ease, opacity 0.2s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:disabled { opacity: 0.6; cursor: wait; }
+
+    .btn-main { background: var(--accent); color: #fff; }
+    .btn-sub { background: var(--accent-2); color: #1b1b1b; }
+
+    .status {
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .status.ok { border-color: #8ad9bc; background: #eafff6; }
+    .status.err { border-color: #efb5b1; background: #fff2f1; color: var(--danger); }
+
+    pre {
+      margin: 0;
+      padding: 14px;
+      border-radius: 12px;
+      background: #111827;
+      color: #d1fae5;
+      overflow: auto;
+      min-height: 220px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .footer {
+      font-size: 0.86rem;
+      color: var(--muted);
+      text-align: center;
+      padding-bottom: 8px;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>ThreadPilot Starter UI</h1>
+      <p>초보자도 3단계로 사용 가능: 1) Health 확인 2) 요구사항 로드 3) PR 리뷰 실행</p>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <h2>1) 서버 상태 확인</h2>
+        <p class="hint">FastAPI가 정상 구동 중인지 먼저 확인하세요.</p>
+        <button id="btn-health" class="btn-main">Health Check</button>
+        <div id="health-status" class="status" style="margin-top: 10px;">아직 확인 안 됨</div>
+      </section>
+
+      <section class="card">
+        <h2>2) 요구사항 문서 로드</h2>
+        <p class="hint">요구사항 문서 파일명을 넣고 bootstrap을 실행하세요.</p>
+        <label for="requirements-file">요구사항 파일 경로</label>
+        <input id="requirements-file" type="text" value="요구사항.md" />
+        <button id="btn-bootstrap" class="btn-sub" style="margin-top: 10px;">Bootstrap 실행</button>
+      </section>
+
+      <section class="card">
+        <h2>3) PR 리뷰 실행</h2>
+        <p class="hint">PR ID 입력 후 Review Packet JSON을 확인하세요.</p>
+        <label for="pr-id">PR ID</label>
+        <input id="pr-id" type="text" value="123" />
+        <div class="row">
+          <input id="live-mode" type="checkbox" />
+          <label for="live-mode" style="margin: 0;">Live LLM 모드 사용</label>
+        </div>
+        <button id="btn-review" class="btn-main">Review 실행</button>
+      </section>
+    </div>
+
+    <section class="card">
+      <h2>결과 출력</h2>
+      <p class="hint">아래 JSON을 복사해서 보고서나 PR 코멘트에 바로 사용할 수 있습니다.</p>
+      <pre id="output">실행 결과가 여기에 표시됩니다.</pre>
+    </section>
+
+    <div class="footer">Tip: exe 사용 시 <code>threadpilot.exe ui</code>로 이 화면을 열 수 있습니다.</div>
+  </main>
+
+  <script>
+    const out = document.getElementById('output');
+    const healthStatus = document.getElementById('health-status');
+
+    function print(data) {
+      if (typeof data === 'string') {
+        out.textContent = data;
+        return;
+      }
+      out.textContent = JSON.stringify(data, null, 2);
+    }
+
+    function setLoading(btn, loading) {
+      btn.disabled = loading;
+      btn.textContent = loading ? '처리 중...' : btn.dataset.label;
+    }
+
+    async function callJson(url, options = {}) {
+      const res = await fetch(url, options);
+      const text = await res.text();
+      let payload;
+      try {
+        payload = JSON.parse(text);
+      } catch {
+        payload = { raw: text };
+      }
+      if (!res.ok) {
+        throw new Error(JSON.stringify(payload, null, 2));
+      }
+      return payload;
+    }
+
+    const btnHealth = document.getElementById('btn-health');
+    const btnBootstrap = document.getElementById('btn-bootstrap');
+    const btnReview = document.getElementById('btn-review');
+    btnHealth.dataset.label = btnHealth.textContent;
+    btnBootstrap.dataset.label = btnBootstrap.textContent;
+    btnReview.dataset.label = btnReview.textContent;
+
+    btnHealth.addEventListener('click', async () => {
+      setLoading(btnHealth, true);
+      try {
+        const payload = await callJson('/api/health');
+        healthStatus.className = 'status ok';
+        healthStatus.textContent = `정상: ${payload.status}`;
+        print(payload);
+      } catch (err) {
+        healthStatus.className = 'status err';
+        healthStatus.textContent = `오류: ${err.message}`;
+        print({ error: err.message });
+      } finally {
+        setLoading(btnHealth, false);
+      }
+    });
+
+    btnBootstrap.addEventListener('click', async () => {
+      setLoading(btnBootstrap, true);
+      try {
+        const requirementsFile = document.getElementById('requirements-file').value.trim();
+        const payload = await callJson('/api/bootstrap', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ requirements_file: requirementsFile })
+        });
+        print(payload);
+      } catch (err) {
+        print({ error: err.message });
+      } finally {
+        setLoading(btnBootstrap, false);
+      }
+    });
+
+    btnReview.addEventListener('click', async () => {
+      setLoading(btnReview, true);
+      try {
+        const prId = document.getElementById('pr-id').value.trim() || 'local';
+        const live = document.getElementById('live-mode').checked;
+        const payload = await callJson(`/api/review/${encodeURIComponent(prId)}?live=${live}`,
+          { method: 'POST' }
+        );
+        print(payload);
+      } catch (err) {
+        print({ error: err.message });
+      } finally {
+        setLoading(btnReview, false);
+      }
+    });
+  </script>
+</body>
+</html>
